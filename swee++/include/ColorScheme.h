@@ -6,7 +6,7 @@
 
 using namespace std;
 
-#ifdef TARGET_OS_OSX
+#ifdef __APPLE__
 #include <experimental/optional>
 using namespace std::experimental;
 #else

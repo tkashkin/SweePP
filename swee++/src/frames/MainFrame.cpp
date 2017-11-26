@@ -5,7 +5,7 @@
 
 #include <ctime>
 
-#ifdef __WXGTK__
+#ifdef __LINUX__
 #include "../swee++.xpm"
 #endif
 
@@ -37,7 +37,10 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id)
 	this->Center();
 	this->SetFocus();
 	this->SetFocusFromKbd();
+
+	#ifndef __APPLE__
 	this->SetIcon(wxICON(sweepp));
+	#endif
 	
 	auto font = this->GetFont();
 	font.SetWeight(wxFONTWEIGHT_BOLD);
@@ -67,7 +70,6 @@ void MainFrame::startGame(bool askForSettings)
 	if(askForSettings)
 	{
 		auto dlg = new GameSettingsDialog(this, w, h, m);
-		dlg->Show(true);
 		
 		w = dlg->fieldWidth();
 		h = dlg->fieldHeight();

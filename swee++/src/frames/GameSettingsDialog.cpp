@@ -4,7 +4,7 @@
 
 #include "frames/GameSettingsDialog.h"
 
-#ifdef __WXGTK__
+#ifdef __LINUX__
 #include "../swee++.xpm"
 #endif
 
@@ -27,12 +27,16 @@ GameSettingsDialog::GameSettingsDialog(wxWindow* parent, uint8_t fieldWidth, uin
 	auto fieldSB = new wxStaticBox(panel, -1, _("Field size"), wxPoint(5, 5), wxSize(285, 50));
 	auto minesSB = new wxStaticBox(panel, -1, _("Mines"), wxPoint(5, 55), wxSize(285, 50));
 	
-	bool isGTK = false;
-	#ifdef __WXGTK__
-	isGTK = true;
+	bool isWindows = false;
+    bool isMacOS = false;
+	#ifdef __WIN32__
+    isWindows = true;
 	#endif
+    #ifdef __APPLE__
+    isMacOS = true;
+    #endif
 	
-	int spinCtrlY = isGTK ? 0 : 20;
+	int spinCtrlY = isWindows ? 20 : isMacOS ? 4 : 0;
 	
 	this->mFieldWidth = new wxSpinCtrl(fieldSB, -1, wxEmptyString, wxPoint(10, spinCtrlY), wxDefaultSize, wxSP_ARROW_KEYS, FieldSizeMin, FieldSizeMax, fieldWidth);
 	this->mFieldHeight = new wxSpinCtrl(fieldSB, -1, wxEmptyString, wxPoint(145, spinCtrlY), wxDefaultSize, wxSP_ARROW_KEYS, FieldSizeMin, FieldSizeMax, fieldHeight);
@@ -45,17 +49,20 @@ GameSettingsDialog::GameSettingsDialog(wxWindow* parent, uint8_t fieldWidth, uin
 	this->mMines->SetSize(265, this->mMines->GetSize().y);
 	
 	sizer->Add(panel, 1);
-	sizer->Add(this->CreateButtonSizer(wxOK), 1, wxALIGN_RIGHT | wxDOWN | wxRIGHT, isGTK ? 0 : 10);
+	sizer->Add(this->CreateButtonSizer(wxOK), 1, wxALIGN_RIGHT | wxDOWN | wxRIGHT, isWindows ? 10 : 0);
 	
 	this->SetSizer(sizer);
 	
 	this->SetClientSize(295, 150);
 	this->Center();
+
+	#ifndef __APPLE__
 	this->SetIcon(wxICON(sweepp));
+	#endif
 	
 	this->mFieldWidth->Bind(wxEVT_SPINCTRL, &GameSettingsDialog::OnSpinCtrlUpdate, this);
 	this->mFieldHeight->Bind(wxEVT_SPINCTRL, &GameSettingsDialog::OnSpinCtrlUpdate, this);
-	
+
 	this->ShowModal();
 	
 	this->Destroy();
