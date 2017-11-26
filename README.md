@@ -1,0 +1,1 @@
+# Swee++ - cross-platform C++ minesweeper game built on wxWidgets

@@ -1,0 +1,8 @@
+Package: swee++
+Version: 0.1-1
+Section: base
+Priority: optional
+Architecture: amd64
+Depends: libc6, libgcc1, libstdc++6, libwxbase3.1-0-unofficial, libwxgtk3.1-0-unofficial
+Maintainer: tk <tkashkin@gmail.com>
+Description: C++ minesweeper game
