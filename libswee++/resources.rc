@@ -1,0 +1,44 @@
+#include <windows.h>
+
+#define VER_FILEVERSION             0,1,0,0
+#define VER_FILEVERSION_STR         "0.1.0.0\0"
+
+#define VER_PRODUCTVERSION             0,1,0,0
+#define VER_PRODUCTVERSION_STR         "0.1.0.0\0"
+
+#ifndef DEBUG
+#define VER_DEBUG                   0
+#else
+#define VER_DEBUG                   VS_FF_DEBUG
+#endif
+
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION    	VER_FILEVERSION
+PRODUCTVERSION 	VER_PRODUCTVERSION
+FILEFLAGSMASK  	VS_FFI_FILEFLAGSMASK
+FILEFLAGS      	VER_DEBUG
+FILEOS         	VOS__WINDOWS32
+FILETYPE       	VFT_DLL
+FILESUBTYPE    	VFT2_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904E4"
+        BEGIN
+            VALUE "CompanyName",      "tk\0"
+            VALUE "FileDescription",  "libswee++, Swee++ logic library\0"
+            VALUE "FileVersion",      VER_FILEVERSION_STR
+            VALUE "InternalName",     "libswee++\0"
+            VALUE "LegalCopyright",   "\0"
+            VALUE "LegalTrademarks1", "\0"
+            VALUE "LegalTrademarks2", "\0"
+            VALUE "OriginalFilename", "libswee++.dll\0"
+            VALUE "ProductName",      "libswee++\0"
+            VALUE "ProductVersion",   VER_PRODUCTVERSION_STR
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1252
+    END
+END
