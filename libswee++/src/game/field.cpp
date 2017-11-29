@@ -170,7 +170,7 @@ namespace sweepp
 		return m;
 	}
 	
-	Point Field::size()
+	Size Field::size()
 	{
 		return Point(this->mFieldWidth, this->mFieldHeight);
 	}
@@ -238,23 +238,15 @@ namespace sweepp
 		return this->mFlags;
 	}
 	
-	long long Field::time()
+	uint64_t Field::time()
 	{
 		if(!this->isGameLost() && !this->isGameWon()) this->mEndTime = std::chrono::high_resolution_clock::now();
-		return std::chrono::duration_cast<std::chrono::seconds>(this->mEndTime - this->mStartTime).count();
+		return static_cast<uint64_t>(llabs(std::chrono::duration_cast<std::chrono::seconds>(this->mEndTime - this->mStartTime).count()));
 	}
 	
-	uint32_t Field::score()
+	Field::Score Field::score()
 	{
-		double size = (double) this->mFieldWidth * (double) this->mFieldHeight / (double) 50;
-		double difficulty = (double) this->mMines / ((double) this->mFieldWidth * (double) this->mFieldHeight);
-		double openings = (double) this->mOpenings / (double) this->mOpeningsRequired;
-		double time = ((double) this->mOpenings / (double) this->time()) * (double) (this->mOpeningsRequired * 2);
-		
-		return static_cast<uint32_t>(sqrt(
-				(double) 100000 *
-				((double) this->mOpenedCells / (double) ((this->mFieldWidth * this->mFieldHeight) - this->mMines))
-				* difficulty * size * openings * time));
+		return Field::Score(this);
 	}
 	
 	// https://gamedev.stackexchange.com/questions/63046/
@@ -319,5 +311,51 @@ namespace sweepp
 	uint32_t Field::openingsRequired()
 	{
 		return this->mOpeningsRequired;
+	}
+	
+	Field::Score::Score(Field* field)
+	{
+		this->fieldSize = field->size();
+		this->mines = field->mMines;
+		this->openings = field->mOpenings;
+		this->openingsRequired = field->mOpeningsRequired;
+		this->openedCells = field->mOpenedCells;
+		this->time = field->time();
+	}
+	
+	uint32_t Field::Score::score() const
+	{
+		double fsz = this->fieldSize.x * this->fieldSize.y;
+		
+		double size = (double) fsz / (double) 50.0;
+		double difficulty = (double) this->mines / (double) fsz;
+		double openings = (double) this->openings / (double) this->openingsRequired;
+		double time = ((double) this->openings / (double) this->time) * (double) this->openingsRequired * 2.0;
+		
+		uint32_t score = static_cast<uint32_t>(sqrt((double) 100000.0 *
+		                                            ((double) this->openedCells / (double) (fsz - this->mines))
+		                                            * difficulty * size * openings * time));
+		
+		return score;
+	}
+	
+	uint32_t Field::Score::operator()()
+	{
+		return this->score();
+	}
+	
+	bool Field::Score::operator<(const Field::Score rhs)
+	{
+		return this->score() < rhs.score();
+	}
+	
+	bool Field::Score::operator>(const Field::Score rhs)
+	{
+		return this->score() > rhs.score();
+	}
+	
+	bool Field::Score::operator==(const Field::Score rhs)
+	{
+		return this->score() == rhs.score();
 	}
 }

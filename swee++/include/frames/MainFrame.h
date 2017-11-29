@@ -37,6 +37,12 @@ class MainFrame: public wxFrame
 		void OnRightPreClick(wxMouseEvent& event);
 		void OnRightClick(wxMouseEvent& event);
 		
+		void OnClose(wxCloseEvent &event);
+		
+		void OnGameWon();
+		
+		void OnGameLost();
+		
 		sweepp::Field* mField = nullptr;
 		bool mGameWon = false, mGameLost = false;
 

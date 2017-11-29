@@ -5,6 +5,9 @@
 
 #include <ctime>
 
+#include <scoresmanager.h>
+#include <frames/ScoresDialog.h>
+
 #ifdef __LINUX__
 #include "../swee++.xpm"
 #endif
@@ -26,6 +29,8 @@ BEGIN_EVENT_TABLE(MainFrame, wxFrame)
 	EVT_LEFT_UP(MainFrame::OnLeftClick)
 	EVT_RIGHT_DOWN(MainFrame::OnRightPreClick)
 	EVT_RIGHT_UP(MainFrame::OnRightClick)
+	
+	EVT_CLOSE(MainFrame::OnClose)
 END_EVENT_TABLE()
 
 MainFrame::MainFrame(wxWindow* parent, wxWindowID id)
@@ -48,6 +53,8 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id)
 	
 	this->GetEventHandler()->Connect(id, wxID_ANY, wxNotifyEventHandler(MainFrame::OnShow));
 	wxPostEvent(this->GetEventHandler(), wxNotifyEvent(wxID_ANY, id));
+	
+	sweepp::ScoresManager::load();
 }
 
 void MainFrame::OnShow(wxNotifyEvent& event)
@@ -78,6 +85,8 @@ void MainFrame::startGame(bool askForSettings)
 	
 	this->mField = new sweepp::Field(w, h, m);
 	
+	this->mGameWon = this->mGameLost = false;
+	
 	this->SetMinClientSize(wxSize(this->mField->size().x * MinCellSize, this->mField->size().y * MinCellSize + Padding));
 	this->Refresh();
 	this->SetFocus();
@@ -95,8 +104,17 @@ void MainFrame::OnPaint(wxPaintEvent& event)
     int w = sz.GetWidth();
     int h = sz.GetHeight();
 	
-	this->mGameWon = this->mField->isGameWon();
-	this->mGameLost = this->mField->isGameLost();
+	if(!this->mGameWon && this->mField->isGameWon())
+	{
+		this->mGameWon = true;
+		this->OnGameWon();
+	}
+	
+	if(!this->mGameLost && this->mField->isGameLost())
+	{
+		this->mGameLost = true;
+		this->OnGameLost();
+	}
 	
 	dc.Clear();
 	
@@ -122,7 +140,7 @@ void MainFrame::OnPaint(wxPaintEvent& event)
 	dc.SetBrush(brush);
 	dc.DrawRectangle(-1, -1, w + 2, h + 2);
 	
-	sweepp::Point fsz = this->mField->size();
+	sweepp::Size fsz = this->mField->size();
 	
 	int cellsz = __max(__min(__min(w / fsz.x, (h - Padding) / fsz.y), MaxCellSize), MinCellSize);
 	
@@ -160,7 +178,7 @@ void MainFrame::OnPaint(wxPaintEvent& event)
 	if(this->mDebugEnabled)
 	{
 		this->SetTitle(wxString::Format(_("Swee++ - C++ minesweeper game - [%i, 3BV: %i, openings: %i]"),
-		                                this->mField->score(),
+		                                this->mField->score()(),
 		                                this->mField->openingsRequired(),
 		                                this->mField->openings()));
 	}
@@ -345,6 +363,9 @@ void MainFrame::OnKeyUp(wxKeyEvent &event)
 			this->startGame(event.ControlDown());
 			break;
 		
+		case 'S': new ScoresDialog(this);
+			break;
+		
 		default:
 			if(!this->mDebugEnabled && event.ControlDown() && event.AltDown() && event.ShiftDown() && event.GetUnicodeKey() == this->mDebugChars[this->mDebugCurrentChar])
 			{
@@ -364,4 +385,22 @@ void MainFrame::OnKeyUp(wxKeyEvent &event)
 			}
 			break;
 	}
+}
+
+void MainFrame::OnGameWon()
+{
+	int pos = sweepp::ScoresManager::add(this->mField->score());
+	
+	new ScoresDialog(this, pos);
+}
+
+void MainFrame::OnGameLost()
+{
+	wxMessageBox("You have lost!", "Congratulations");
+}
+
+void MainFrame::OnClose(wxCloseEvent &event)
+{
+	sweepp::ScoresManager::save();
+	event.Skip();
 }

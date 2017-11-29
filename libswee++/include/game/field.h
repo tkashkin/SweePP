@@ -1,7 +1,5 @@
 #pragma once
 
-#include <cstdint>
-#include <ctime>
 #include <libswee++.h>
 #include <game/cell.h>
 #include <chrono>
@@ -14,6 +12,30 @@ namespace sweepp
 	class SWEEPP Field
 	{
 		public:
+			struct SWEEPP Score
+			{
+				Size fieldSize = Size(0, 0);
+				uint16_t mines = 0;
+				uint16_t openings = 0;
+				uint16_t openingsRequired = 0;
+				uint16_t openedCells = 0;
+				uint64_t time = 0;
+				
+				Score() = default;
+				
+				explicit Score(Field* field);
+				
+				uint32_t score() const;
+				
+				uint32_t operator()();
+				
+				bool operator<(Score rhs);
+				
+				bool operator>(Score rhs);
+				
+				bool operator==(Score rhs);
+			};
+			
 			/**
 			 * @param width ширина
 			 * @param height высота
@@ -63,7 +85,7 @@ namespace sweepp
 			 * Получить размер поля
 			 * @return размер поля
 			 */
-			Point size();
+			Size size();
 			
 			/**
 			 * @return победа?
@@ -88,7 +110,7 @@ namespace sweepp
 			/**
 			 * @return время игры
 			 */
-			long long time();
+			uint64_t time();
 			
 			/**
 			 * @return выполненные открытия
@@ -103,7 +125,7 @@ namespace sweepp
 			/**
 			 * @return счёт
 			 */
-			uint32_t score();
+			Score score();
 		
 		private:
 			void generateMines(Point firstClick);

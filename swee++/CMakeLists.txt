@@ -4,14 +4,16 @@ project(swee++ VERSION 0.1)         # проект "swee++" версии 0.1
 set(SOURCES                         # файлы реализации
         src/App.cpp
         src/frames/MainFrame.cpp
-        src/frames/GameSettingsDialog.cpp)
+        src/frames/GameSettingsDialog.cpp
+        src/frames/ScoresDialog.cpp)
 
 set(HEADERS                         # заголовочные файлы
         include/wx_pch.h
         include/App.h
         include/ColorScheme.h
         include/frames/MainFrame.h
-        include/frames/GameSettingsDialog.h)
+        include/frames/GameSettingsDialog.h
+        include/frames/ScoresDialog.h)
 
 #if(UNIX AND NOT APPLE)
 #    add_definitions(-D__GXX_ABI_VERSION=1010)
@@ -23,7 +25,7 @@ endif()
 include_directories(include)        # каталог заголовочных файлов
 
 # подключение библиотек wxWidgets
-find_package(wxWidgets COMPONENTS core base REQUIRED)
+find_package(wxWidgets COMPONENTS adv core base REQUIRED)
 include("${wxWidgets_USE_FILE}")
 
 if(WIN32)                           # файл ресурсов для Windows

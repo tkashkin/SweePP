@@ -2,14 +2,14 @@ cmake_minimum_required(VERSION 3.8) # требуется CMake версии >= 3
 project(libswee++ VERSION 0.1)      # проект "libswee++" версии 0.1
 
 set(SOURCES                         # файлы реализации
-        src/libswee++.cpp
         src/game/cell.cpp
-        src/game/field.cpp)
+        src/game/field.cpp src/scoresmanager.cpp)
 
 set(HEADERS                         # заголовочные файлы
         include/libswee++.h
         include/game/cell.h
-        include/game/field.h)
+        include/game/field.h
+        include/scoresmanager.h)
 
 add_definitions(-DSWEEPP_EXPORT)
 

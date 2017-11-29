@@ -2,21 +2,8 @@
 
 #include <libswee++.h>
 
-#include <cstdint>
-
 namespace sweepp
 {
-	/**
-	 * Точка
-	 */
-	struct SWEEPP Point
-	{
-		uint8_t x = 0;
-		uint8_t y = 0;
-		Point(uint8_t x, uint8_t y): x(x), y(y) {}
-		bool operator==(const Point& rhs) { return this->x == rhs.x && this->y == rhs.y; }
-	};
-
 	/**
 	 * Клетка
 	 */
