@@ -19,7 +19,7 @@ namespace sweepp
 				uint16_t openings = 0;
 				uint16_t openingsRequired = 0;
 				uint16_t openedCells = 0;
-				uint64_t time = 0;
+				long long time = 0;
 				
 				Score() = default;
 				
@@ -110,7 +110,7 @@ namespace sweepp
 			/**
 			 * @return время игры
 			 */
-			uint64_t time();
+			long long time();
 			
 			/**
 			 * @return выполненные открытия

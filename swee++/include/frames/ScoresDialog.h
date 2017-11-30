@@ -7,8 +7,12 @@
 class ScoresDialog: public wxDialog
 {
 	public:
-		ScoresDialog(wxWindow* parent, int pos = -1);
+		static void show(wxWindow* parent, int pos = -1);
 	
 	private:
+		ScoresDialog(wxWindow* parent, int pos = -1);
+		
+		void setupGrid(int pos);
+	
 	DECLARE_EVENT_TABLE()
 };

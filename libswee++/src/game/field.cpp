@@ -42,7 +42,7 @@ namespace sweepp
 	
 	void Field::generateMines(Point firstClick)
 	{
-		this->mStartTime = std::chrono::high_resolution_clock::now();
+		this->mStartTime = this->mEndTime = std::chrono::system_clock::now();
 		std::srand(static_cast<unsigned int>(this->mStartTime.time_since_epoch().count()));
 		
 		uint16_t m = 0;
@@ -238,10 +238,11 @@ namespace sweepp
 		return this->mFlags;
 	}
 	
-	uint64_t Field::time()
+	long long Field::time()
 	{
-		if(!this->isGameLost() && !this->isGameWon()) this->mEndTime = std::chrono::high_resolution_clock::now();
-		return static_cast<uint64_t>(llabs(std::chrono::duration_cast<std::chrono::seconds>(this->mEndTime - this->mStartTime).count()));
+		if(!this->mMinesGenerated) return 0;
+		if(!this->isGameLost() && !this->isGameWon()) this->mEndTime = std::chrono::system_clock::now();
+		return std::chrono::duration_cast<std::chrono::seconds>(this->mEndTime - this->mStartTime).count();
 	}
 	
 	Field::Score Field::score()
@@ -327,14 +328,14 @@ namespace sweepp
 	{
 		double fsz = this->fieldSize.x * this->fieldSize.y;
 		
-		double size = (double) fsz / (double) 50.0;
-		double difficulty = (double) this->mines / (double) fsz;
-		double openings = (double) this->openings / (double) this->openingsRequired;
-		double time = ((double) this->openings / (double) this->time) * (double) this->openingsRequired * 2.0;
+		double kSize = (double) fsz / (double) 50.0;
+		double kDifficulty = (double) this->mines / (double) fsz;
+		double kOpenings = (double) this->openings / (double) this->openingsRequired;
+		double kTime = ((double) this->openings / this->time) * (double) this->openingsRequired * 5.0;
 		
 		uint32_t score = static_cast<uint32_t>(sqrt((double) 100000.0 *
 		                                            ((double) this->openedCells / (double) (fsz - this->mines))
-		                                            * difficulty * size * openings * time));
+		                                            * kDifficulty * kSize * kOpenings * kTime));
 		
 		return score;
 	}

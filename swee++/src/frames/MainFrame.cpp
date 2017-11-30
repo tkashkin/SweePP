@@ -116,6 +116,8 @@ void MainFrame::OnPaint(wxPaintEvent& event)
 		this->OnGameLost();
 	}
 	
+	this->mField->time();
+	
 	dc.Clear();
 	
 	wxBrush brush;
@@ -363,7 +365,7 @@ void MainFrame::OnKeyUp(wxKeyEvent &event)
 			this->startGame(event.ControlDown());
 			break;
 		
-		case 'S': new ScoresDialog(this);
+		case 'S': ScoresDialog::show(this);
 			break;
 		
 		default:
@@ -391,7 +393,7 @@ void MainFrame::OnGameWon()
 {
 	int pos = sweepp::ScoresManager::add(this->mField->score());
 	
-	new ScoresDialog(this, pos);
+	ScoresDialog::show(this, pos);
 }
 
 void MainFrame::OnGameLost()

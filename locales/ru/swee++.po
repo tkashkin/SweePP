@@ -32,3 +32,21 @@ msgstr "%i флагов"
 
 msgid "Swee++ - C++ minesweeper game - [%i, 3BV: %i, openings: %i]"
 msgstr "Swee++ - сапёр на C++ - [%i, 3BV: %i, открытий: %i]"
+
+msgid "Score"
+msgstr "Счёт"
+
+msgid "Openings"
+msgstr "Открытия"
+
+msgid "Opened cells"
+msgstr "Открытые клетки"
+
+msgid "Time"
+msgstr "Время"
+
+msgid "Scores"
+msgstr "Рекорды"
+
+msgid "No scores saved"
+msgstr "Нет сохранённых рекордов"
