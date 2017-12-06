@@ -11,6 +11,7 @@ set(HEADERS                         # заголовочные файлы
         include/wx_pch.h
         include/App.h
         include/ColorScheme.h
+        include/GamePresets.h
         include/frames/MainFrame.h
         include/frames/GameSettingsDialog.h
         include/frames/ScoresDialog.h)

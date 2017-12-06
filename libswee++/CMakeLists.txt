@@ -3,7 +3,8 @@ project(libswee++ VERSION 0.1)      # проект "libswee++" версии 0.1
 
 set(SOURCES                         # файлы реализации
         src/game/cell.cpp
-        src/game/field.cpp src/scoresmanager.cpp)
+        src/game/field.cpp
+        src/scoresmanager.cpp)
 
 set(HEADERS                         # заголовочные файлы
         include/libswee++.h

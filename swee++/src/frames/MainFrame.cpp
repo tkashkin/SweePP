@@ -2,6 +2,7 @@
 #include "frames/MainFrame.h"
 
 #include <ColorScheme.h>
+#include <GamePresets.h>
 
 #include <ctime>
 
@@ -51,6 +52,8 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id)
 	font.SetWeight(wxFONTWEIGHT_BOLD);
 	this->SetFont(font);
 	
+	this->setupMenu();
+	
 	this->GetEventHandler()->Connect(id, wxID_ANY, wxNotifyEventHandler(MainFrame::OnShow));
 	wxPostEvent(this->GetEventHandler(), wxNotifyEvent(wxID_ANY, id));
 	
@@ -62,10 +65,10 @@ void MainFrame::OnShow(wxNotifyEvent& event)
 	this->startGame();
 }
 
-void MainFrame::startGame(bool askForSettings)
+void MainFrame::startGame(bool custom, GamePresets::Preset* preset)
 {
-	uint8_t w = 10, h = 10;
-	uint16_t m = 10;
+	uint8_t w = GamePresets::presets[0].fieldWidth, h = GamePresets::presets[0].fieldHeight;
+	uint16_t m = GamePresets::presets[0].mines;
 	
 	if(this->mField != nullptr)
 	{
@@ -74,7 +77,14 @@ void MainFrame::startGame(bool askForSettings)
 		m = this->mField->mines();
 	}
 	
-	if(askForSettings)
+	if(preset != nullptr)
+	{
+		w = preset->fieldWidth;
+		h = preset->fieldHeight;
+		m = preset->mines;
+	}
+	
+	if(custom)
 	{
 		auto dlg = new GameSettingsDialog(this, w, h, m);
 		
@@ -88,6 +98,13 @@ void MainFrame::startGame(bool askForSettings)
 	this->mGameWon = this->mGameLost = false;
 	
 	this->SetMinClientSize(wxSize(this->mField->size().x * MinCellSize, this->mField->size().y * MinCellSize + Padding));
+	
+	if(this->GetClientSize().x < this->GetMinClientSize().x || this->GetClientSize().y < this->GetMinClientSize().y)
+	{
+		this->Fit();
+		this->Center();
+	}
+	
 	this->Refresh();
 	this->SetFocus();
 	this->SetFocusFromKbd();
@@ -136,7 +153,7 @@ void MainFrame::OnPaint(wxPaintEvent& event)
 	}
 	else
 	{
-		brush.SetColour(wxColour(211, 211, 211));
+		brush.SetColour(this->GetBackgroundColour());
 	}
 	
 	dc.SetBrush(brush);
@@ -165,9 +182,6 @@ void MainFrame::OnPaint(wxPaintEvent& event)
 	
 	dc.SetTextForeground(*wxBLACK);
 	
-	wxRect restart = this->drawRestartButton(&dc, _("[R] - Restart"), false, w, h, containerX, containerY, containerWidth, containerHeight);
-	this->drawRestartButton(&dc, _("[^R] - Settings"), true, w, h, restart.x + restart.width + 8, containerY, containerWidth, containerHeight);
-	
 	dc.DrawText(wxString::Format(_("%i mines"), this->mField->mines()), __max(containerX, 8), containerY - 8 - dc.GetFontMetrics().height);
 	
 	wxString flags = wxString::Format(_("%i flags"), this->mField->flags());
@@ -184,37 +198,6 @@ void MainFrame::OnPaint(wxPaintEvent& event)
 		                                this->mField->openingsRequired(),
 		                                this->mField->openings()));
 	}
-}
-
-wxRect MainFrame::drawRestartButton(wxAutoBufferedPaintDC* dc, wxString text, bool askForSettings, int w, int h, int cx, int cy, int cw, int ch)
-{
-	wxSize sz = dc->GetTextExtent(text);
-	
-	int rx = __max(cx, 8);
-	int ry = cy + ch + 8;
-	
-	wxRect rect = wxRect(rx - 8, ry - 8, sz.x + 16, sz.y + 16);
-	
-	dc->SetBrush(wxBrush(wxColour(233, 233, 233)));
-	
-	if (rect.Contains(this->mMousePos))
-	{
-		if(mLeftPreClick)
-		{
-			dc->SetBrush(*wxWHITE_BRUSH);
-		}
-		
-		dc->DrawRectangle(rect);
-		
-		if(this->mLeftClick)
-		{
-			this->mLeftClick = this->mRightClick = false;
-			this->startGame(askForSettings);
-		}
-	}
-	dc->DrawText(text, rx, ry);
-	
-	return rect;
 }
 
 ColorScheme::Scheme MainFrame::getCellColors(sweepp::Cell* cell, int cx, int cy, int size)
@@ -359,33 +342,22 @@ void MainFrame::OnRightClick(wxMouseEvent &event)
 
 void MainFrame::OnKeyUp(wxKeyEvent &event)
 {
-	switch(event.GetUnicodeKey())
+	if(!this->mDebugEnabled && event.ControlDown() && event.AltDown() && event.ShiftDown() &&
+	   event.GetUnicodeKey() == this->mDebugChars[this->mDebugCurrentChar])
 	{
-		case 'R':
-			this->startGame(event.ControlDown());
-			break;
+		this->mDebugCurrentChar++;
 		
-		case 'S': ScoresDialog::show(this);
-			break;
-		
-		default:
-			if(!this->mDebugEnabled && event.ControlDown() && event.AltDown() && event.ShiftDown() && event.GetUnicodeKey() == this->mDebugChars[this->mDebugCurrentChar])
-			{
-				this->mDebugCurrentChar++;
-				
-				if(this->mDebugCurrentChar >= wxStrlen(this->mDebugChars))
-				{
-					this->mDebugEnabled = true;
-					std::srand(unsigned(std::time(nullptr)));
-					this->mDebugColor = wxColour(std::rand() % 255, std::rand() % 255, std::rand() % 255);
-					this->Refresh();
-				}
-			}
-			else
-			{
-				this->mDebugCurrentChar = 0;
-			}
-			break;
+		if(this->mDebugCurrentChar >= wxStrlen(this->mDebugChars))
+		{
+			this->mDebugEnabled = true;
+			std::srand(unsigned(std::time(nullptr)));
+			this->mDebugColor = wxColour(std::rand() % 255, std::rand() % 255, std::rand() % 255);
+			this->Refresh();
+		}
+	}
+	else
+	{
+		this->mDebugCurrentChar = 0;
 	}
 }
 
@@ -405,4 +377,73 @@ void MainFrame::OnClose(wxCloseEvent &event)
 {
 	sweepp::ScoresManager::save();
 	event.Skip();
+}
+
+void MainFrame::setupMenu()
+{
+	auto menuBar = new wxMenuBar;
+	auto game = new wxMenu;
+	
+	auto newGame = new wxMenu;
+	
+	int i = 0;
+	for(auto p : GamePresets::presets)
+	{
+		if(p.menuID == wxID_NONE)
+		{
+			newGame->AppendSeparator();
+		}
+		else
+		{
+			newGame->Append(p.menuID, wxString::Format("%s\tCTRL+%i", _(p.name), ++i));
+		}
+	}
+	
+	newGame->AppendSeparator();
+	newGame->Append(static_cast<int>(MainMenu::NewGame), _("&Custom...") + wxT("\tCTRL+N"));
+	
+	game->AppendSubMenu(newGame, _("&New game..."));
+	game->Append(static_cast<int>(MainMenu::Restart), _("Quick &restart") + wxT("\tCTRL+R"));
+	game->AppendSeparator();
+	game->Append(static_cast<int>(MainMenu::Scores), _("&Scores") + wxT("\tCTRL+S"));
+	
+	#ifndef __APPLE__
+	game->AppendSeparator();
+	#endif
+	
+	game->Append(static_cast<int>(MainMenu::Exit), _("E&xit") + wxT("\tCTRL+X"));
+	
+	menuBar->Append(game, _("&Game"));
+	
+	this->SetMenuBar(menuBar);
+	
+	this->Bind(wxEVT_MENU, wxMenuEventHandler(MainFrame::OnMenu), this);
+}
+
+void MainFrame::OnMenu(wxMenuEvent &event)
+{
+	switch(event.GetId())
+	{
+		case static_cast<int>(MainMenu::NewGame): this->startGame(true);
+			break;
+		
+		case static_cast<int>(MainMenu::Restart): this->startGame(false);
+			break;
+		
+		case static_cast<int>(MainMenu::Scores): ScoresDialog::show(this);
+			break;
+		
+		case static_cast<int>(MainMenu::Exit): this->Close();
+			break;
+		
+		default:
+			for(auto p : GamePresets::presets)
+			{
+				if(p.menuID != wxID_NONE && p.menuID == event.GetId())
+				{
+					this->startGame(false, &p);
+				}
+			}
+			break;
+	}
 }

@@ -1,10 +1,7 @@
 #ifndef WX_PCH_H_INCLUDED
 #define WX_PCH_H_INCLUDED
 
-//#define _U(str) wxString::FromUTF8(str)
-
-//#undef _
-//#define _(s) wxT(s)
+#define _U(str) wxString::FromUTF8(str)
 
 #include <wx/wxprec.h>
 
