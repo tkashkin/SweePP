@@ -18,12 +18,6 @@ msgstr "Мины"
 msgid "Swee++ - C++ minesweeper game"
 msgstr "Swee++ - сапёр на C++"
 
-msgid "[R] - Restart"
-msgstr "[R] - Рестарт"
-
-msgid "[^R] - Settings"
-msgstr "[^R] - Настройки"
-
 msgid "%i mines"
 msgstr "%i мин"
 
@@ -50,3 +44,42 @@ msgstr "Рекорды"
 
 msgid "No scores saved"
 msgstr "Нет сохранённых рекордов"
+
+msgid "&Game"
+msgstr "&Игра"
+
+msgid "&New game"
+msgstr "&Новая игра"
+
+msgid "Quick &restart"
+msgstr "Быстрый &перезапуск"
+
+msgid "&Scores"
+msgstr "&Рекорды"
+
+msgid "E&xit"
+msgstr "&Выход"
+
+msgid "Beginner"
+msgstr "Новичок"
+
+msgid "Skilled"
+msgstr "Немного сложнее"
+
+msgid "Hardcore"
+msgstr "Хардкор"
+
+msgid "Experienced"
+msgstr "Опытный"
+
+msgid "No mistakes"
+msgstr "Нет права на ошибку"
+
+msgid "Pro"
+msgstr "Профессионал"
+
+msgid "Impossible"
+msgstr "Невозможно"
+
+msgid "&Custom..."
+msgstr "&Настроить..."

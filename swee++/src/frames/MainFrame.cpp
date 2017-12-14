@@ -62,7 +62,7 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id)
 
 void MainFrame::OnShow(wxNotifyEvent& event)
 {
-	this->startGame();
+	this->startGame(false, nullptr);
 }
 
 void MainFrame::startGame(bool custom, GamePresets::Preset* preset)
@@ -402,7 +402,7 @@ void MainFrame::setupMenu()
 	newGame->AppendSeparator();
 	newGame->Append(static_cast<int>(MainMenu::NewGame), _("&Custom...") + wxT("\tCTRL+N"));
 	
-	game->AppendSubMenu(newGame, _("&New game..."));
+	//game->AppendSubMenu(newGame, _("&New game..."));
 	game->Append(static_cast<int>(MainMenu::Restart), _("Quick &restart") + wxT("\tCTRL+R"));
 	game->AppendSeparator();
 	game->Append(static_cast<int>(MainMenu::Scores), _("&Scores") + wxT("\tCTRL+S"));
@@ -414,6 +414,7 @@ void MainFrame::setupMenu()
 	game->Append(static_cast<int>(MainMenu::Exit), _("E&xit") + wxT("\tCTRL+X"));
 	
 	menuBar->Append(game, _("&Game"));
+	menuBar->Append(newGame, _("&New game"));
 	
 	this->SetMenuBar(menuBar);
 	
