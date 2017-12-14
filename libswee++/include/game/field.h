@@ -144,7 +144,7 @@ namespace sweepp
 			
 			uint16_t mOpenings = 0, mOpeningsRequired = 0;
 			
-			std::chrono::high_resolution_clock::time_point mStartTime, mEndTime;
+			std::chrono::system_clock::time_point mStartTime, mEndTime;
 	};
 
 }
