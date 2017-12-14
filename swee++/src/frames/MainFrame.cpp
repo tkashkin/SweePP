@@ -39,7 +39,7 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id)
 {
     this->SetBackgroundStyle(wxBG_STYLE_PAINT);
     this->SetClientSize(wxSize(500, 500));
-	this->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+	this->SetBackgroundColour(wxColour(222, 222, 222));
 	this->Center();
 	this->SetFocus();
 	this->SetFocusFromKbd();
